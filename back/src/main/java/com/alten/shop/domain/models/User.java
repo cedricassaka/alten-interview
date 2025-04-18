@@ -2,13 +2,14 @@ package com.alten.shop.domain.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @Entity
 @Table(name = "app_user")
 public class User extends AuditMetadata {
@@ -19,10 +20,11 @@ public class User extends AuditMetadata {
     private String username;
     @Column(nullable = false)
     private String firstName;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = false)
     private String password;
     @ColumnDefault("true")
     private boolean active;
+
 }

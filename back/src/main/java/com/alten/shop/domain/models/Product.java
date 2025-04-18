@@ -3,12 +3,13 @@ package com.alten.shop.domain.models;
 import com.alten.shop.domain.enums.InventoryStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @Entity
 public class Product extends AuditMetadata {
     @Id

@@ -16,3 +16,7 @@ spring:
     console:
       enabled: true
 
+
+app:
+  secret-key: $2a$12$TY7Cy3L0Mz./innA6OJIFuoAt37SOaZTkUOJwLUX3g1g9tNY4M5Ge
+  expiration-time: 3600000
