@@ -47,6 +47,8 @@ public class SecurityConfigurer {
                         auth
                             .requestMatchers(HttpMethod.POST, "/account").permitAll()
                             .requestMatchers(HttpMethod.POST, "/token").permitAll()
+                            .requestMatchers( "/v3/api-docs/**").permitAll()
+                            .requestMatchers( "/swagger-ui/**").permitAll()
                             .requestMatchers("/api/v1/products/**").hasAuthority("admin")
                         .anyRequest().authenticated()
                 )
