@@ -33,7 +33,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public Product create(ProductCreateRequestDTO requestBody) {
-        if (repository.findFirstByInternalReference(requestBody.getInternalReference()).isPresent())
+        if (repository.findFirstByInternalReference(requestBody.internalReference()).isPresent())
             throw new DuplicateKeyException("internalReference");
         Product product = mapper.convertValue(requestBody, Product.class);
         product.setCode(generateUniqueCode());
@@ -57,7 +57,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public Product update(ProductUpdateRequestDTO requestBody, long id) {
         Product product = findById(id);
-        if (repository.findFirstByInternalReferenceAndIdNot(requestBody.getInternalReference(), id).isPresent())
+        if (repository.findFirstByInternalReferenceAndIdNot(requestBody.internalReference(), id).isPresent())
             throw new DuplicateKeyException("internalReference");
         String[] nulls = getNullPropertiesNames(requestBody);
         BeanUtils.copyProperties(requestBody, product, nulls);

@@ -35,4 +35,5 @@ public class ResourceExceptionHandler extends ResponseEntityExceptionHandler {
                 new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
+
 }

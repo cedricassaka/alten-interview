@@ -25,14 +25,14 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User register(UserRequestDTO userRequestDTO) {
-        if (repository.findFirstByUsername(userRequestDTO.getUsername()).isPresent())
+        if (repository.findFirstByUsername(userRequestDTO.username()).isPresent())
             throw new DuplicateKeyException("username");
-        if (repository.findFirstByEmail(userRequestDTO.getEmail()).isPresent())
+        if (repository.findFirstByEmail(userRequestDTO.email()).isPresent())
             throw new DuplicateKeyException("email");
 
         User user = mapper.convertValue(userRequestDTO, User.class);
         user.setActive(true);
-        user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
+        user.setPassword(passwordEncoder.encode(userRequestDTO.password()));
         return repository.save(user);
     }
 }
