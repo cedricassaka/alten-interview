@@ -1,12 +1,15 @@
 package com.alten.shop.runtime.rest.controllers;
 
+import com.alten.shop.domain.models.User;
 import com.alten.shop.domain.services.UserService;
 import com.alten.shop.runtime.rest.dtos.AuthenticationRequestDTO;
 import com.alten.shop.runtime.rest.dtos.AuthenticationResponseDTO;
+import com.alten.shop.runtime.rest.dtos.UserRequestDTO;
 import com.alten.shop.runtime.utils.JwtUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -40,5 +43,10 @@ public class AuthenticationController {
                             .build()
             );
         } else throw new BadCredentialsException("Invalid Credential");
+    }
+
+    @PostMapping("/account")
+    public ResponseEntity<User> register(@Valid @RequestBody UserRequestDTO body) {
+        return new ResponseEntity<>(userService.register(body), HttpStatus.CREATED);
     }
 }

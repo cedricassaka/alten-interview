@@ -45,8 +45,8 @@ public class SecurityConfigurer {
                 csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
                         auth
-                            .requestMatchers("/account", HttpMethod.POST.name()).permitAll()
-                            .requestMatchers("/token", HttpMethod.POST.name()).permitAll()
+                            .requestMatchers(HttpMethod.POST, "/account").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/token").permitAll()
                             .requestMatchers("/api/v1/products/**").hasAuthority("admin")
                         .anyRequest().authenticated()
                 )
