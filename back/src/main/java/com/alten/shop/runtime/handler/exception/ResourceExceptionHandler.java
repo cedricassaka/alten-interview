@@ -28,4 +28,11 @@ public class ResourceExceptionHandler extends ResponseEntityExceptionHandler {
                 new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
+    @ExceptionHandler(value = { ResourceNotFoundException.class, ResourceNotFoundException.class })
+    protected ResponseEntity<Object> handleNotFoundResource(
+            RuntimeException ex, WebRequest request) {
+        return handleExceptionInternal(ex, new ErrorCode(ex.getMessage(), "NF-00001"),
+                new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
 }

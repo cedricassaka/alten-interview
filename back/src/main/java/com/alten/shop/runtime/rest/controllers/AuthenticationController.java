@@ -32,17 +32,19 @@ public class AuthenticationController {
     private final UserService userService;
 
 
-    @PostMapping("/token")
+    @PostMapping( "/token")
     public ResponseEntity<AuthenticationResponseDTO> login(@Valid @RequestBody AuthenticationRequestDTO body) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(body.getEmail(), body.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(body.email(), body.password()));
         if (authentication.isAuthenticated()) {
+            log.info("Authentication successful");
             return ResponseEntity.ok(
-                    AuthenticationResponseDTO.builder()
-                            .token(jwtUtils.generateToken((UserDetails) authentication.getPrincipal()))
-                            .expireIn(jwtUtils.tokenDuration())
-                            .build()
+                new AuthenticationResponseDTO(
+                        jwtUtils.generateToken((UserDetails) authentication.getPrincipal()),
+                        jwtUtils.tokenDuration()
+                )
+
             );
-        } else throw new BadCredentialsException("Invalid Credential");
+        } else throw new BadCredentialsException("Invalid Credentials");
     }
 
     @PostMapping("/account")
