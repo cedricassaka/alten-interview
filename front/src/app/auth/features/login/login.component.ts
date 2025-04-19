@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from "primeng/button";
@@ -26,19 +26,17 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class LoginComponent {
 
-  form: FormGroup;
+  fb = inject(FormBuilder);
+  accountService = inject(AccountService)
+  router = inject(Router)
+  
+  form: FormGroup = this.fb.group({
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', [Validators.required, Validators.min(300)])
+  })
+
   loading: boolean = false;
   
-  constructor(
-    private fb: FormBuilder,
-    private accountService: AccountService,
-    private router: Router
-  ) {
-    this.form = this.fb.group({
-      email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required, Validators.min(300)])
-    })
-  }
 
   onSubmit() {
     if (!this.form.valid) return;

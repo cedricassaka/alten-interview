@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { ButtonModule } from "primeng/button";
 import { InputTextareaModule } from 'primeng/inputtextarea';
@@ -21,17 +21,15 @@ import { InputTextModule } from 'primeng/inputtext';
 })
 export class ContactFormComponent {
 
-  form: FormGroup;
 
-  constructor(
-    private fb: FormBuilder,
-    private messageService: MessageService
-  ) {
-    this.form = this.fb.group({
-      email: new FormControl('', [Validators.required, Validators.email]),
-      message: new FormControl('', [Validators.required, Validators.maxLength(300)])
-    })
-  }
+  fb = inject(FormBuilder);
+  messageService = inject(MessageService)
+
+  form: FormGroup = this.fb.group({
+    email: new FormControl('', [Validators.required, Validators.email]),
+    message: new FormControl('', [Validators.required, Validators.maxLength(300)])
+  });
+
 
   onSave() {
     this.messageService.add({ severity: 'success', summary: '', detail: 'Demande de contact envoyée avec succès', life: 3000 });
