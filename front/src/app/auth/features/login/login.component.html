@@ -1,0 +1,29 @@
+
+<div class="main">
+    <p-card header="Connexion" [style]="{ width: '30rem', overflow: 'hidden' }">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="form-field">
+              <label for="name">Email</label>
+              <input pInputText
+                type="email"
+                id="email"
+                name="email"
+                formControlName="email">
+            </div>
+            <div class="form-field">
+              <label for="price">Password</label>
+              <input pInputText
+                type="password"
+                id="email"
+                name="password"
+                formControlName="password"
+                >
+            </div>
+            
+            <br />
+            <div class="flex justify-content-end">
+              <p-button icon="pi pi-chevron-right" [loading]="loading" type="submit" [disabled]="!form.valid" label="Se connecter" severity="success"/>
+            </div>
+          </form>
+    </p-card>
+</div>

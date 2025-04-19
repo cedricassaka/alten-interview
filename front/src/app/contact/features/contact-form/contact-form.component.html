@@ -1,0 +1,27 @@
+<form [formGroup]="form" (ngSubmit)="onSave()">
+    <div class="form-field">
+      <label for="name">Email</label>
+      <input pInputText
+        type="email"
+        id="email"
+        name="email"
+        formControlName="email">
+    </div>
+    <div class="form-field">
+      <label for="price">Message</label>
+      <textarea pInputTextarea
+        name="message"
+        rows="5" cols="30"
+        formControlName= "message"
+        >
+      </textarea>
+    </div>
+    
+    <div class="flex justify-content-between">
+      <p-button type="submit" [disabled]="!form.valid" label="Envoyer" severity="success"/>
+    </div>
+  </form>
+
+
+  <p-toast />
+

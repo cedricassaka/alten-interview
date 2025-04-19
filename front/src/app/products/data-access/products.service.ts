@@ -1,7 +1,8 @@
 import { Injectable, inject, signal } from "@angular/core";
 import { Product } from "./product.model";
 import { HttpClient } from "@angular/common/http";
-import { catchError, Observable, of, tap } from "rxjs";
+import { catchError, map, Observable, of, tap } from "rxjs";
+import { PageResponse } from "./page-response.model";
 
 @Injectable({
     providedIn: "root"
@@ -14,13 +15,8 @@ import { catchError, Observable, of, tap } from "rxjs";
 
     public readonly products = this._products.asReadonly();
 
-    public get(): Observable<Product[]> {
-        return this.http.get<Product[]>(this.path).pipe(
-            catchError((error) => {
-                return this.http.get<Product[]>("assets/products.json");
-            }),
-            tap((products) => this._products.set(products)),
-        );
+    public get(page: number, size: number): Observable<PageResponse> {
+        return this.http.get<PageResponse>(`${this.path}?page=${page}&size=${size}`);
     }
 
     public create(product: Product): Observable<boolean> {

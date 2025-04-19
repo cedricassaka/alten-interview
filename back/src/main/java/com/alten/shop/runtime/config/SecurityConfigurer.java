@@ -1,6 +1,7 @@
 package com.alten.shop.runtime.config;
 
 import com.alten.shop.domain.services.CustomUserDetailsService;
+import com.alten.shop.runtime.security.CustomAuthenticationEntryPoint;
 import com.alten.shop.runtime.security.JwtRequestFilter;
 import com.alten.shop.runtime.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
@@ -22,8 +24,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfigurer {
+
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtUtils jwtUtils;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
 
     @Bean
@@ -43,6 +47,9 @@ public class SecurityConfigurer {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.
                 csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
+                    httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(customAuthenticationEntryPoint);
+                })
                 .authorizeHttpRequests(auth ->
                         auth
                             .requestMatchers(HttpMethod.POST, "/account").permitAll()
@@ -56,5 +63,7 @@ public class SecurityConfigurer {
                 .addFilterBefore(new JwtRequestFilter(jwtUtils, customUserDetailsService), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
+
 
 }

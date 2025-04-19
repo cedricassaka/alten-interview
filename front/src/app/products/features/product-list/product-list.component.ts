@@ -6,6 +6,7 @@ import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DataViewModule } from 'primeng/dataview';
 import { DialogModule } from 'primeng/dialog';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 
 const emptyProduct: Product = {
   id: 0,
@@ -29,19 +30,34 @@ const emptyProduct: Product = {
   templateUrl: "./product-list.component.html",
   styleUrls: ["./product-list.component.scss"],
   standalone: true,
-  imports: [DataViewModule, CardModule, ButtonModule, DialogModule, ProductFormComponent],
+  imports: [DataViewModule, CardModule, ButtonModule, DialogModule, ProductFormComponent, PaginatorModule],
 })
 export class ProductListComponent implements OnInit {
   private readonly productsService = inject(ProductsService);
 
-  public readonly products = this.productsService.products;
+  public products: Product[] = [];
 
   public isDialogVisible = false;
   public isCreation = false;
   public readonly editedProduct = signal<Product>(emptyProduct);
+  public totalElements = 0;
+  public page = 0;
+  public first = 0;
+  public size = 10;
+
 
   ngOnInit() {
-    this.productsService.get().subscribe();
+    this.load(true);
+  }
+
+
+  load(initial: boolean): void {
+    this.productsService.get(this.page, this.size).subscribe({
+      next: (response) => {
+        if (initial) this.totalElements = response.page.totalElements;
+        this.products = response.content;
+      }
+    });
   }
 
   public onCreate() {
@@ -75,5 +91,11 @@ export class ProductListComponent implements OnInit {
 
   private closeDialog() {
     this.isDialogVisible = false;
+  }
+
+  public onPageChange(pageevent: PaginatorState) {
+    this.page = pageevent.page!;
+    this.size = pageevent.rows!;
+    this.load(false)
   }
 }
