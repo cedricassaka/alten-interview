@@ -1,0 +1,81 @@
+<form [formGroup]="form" (ngSubmit)="onSave()">
+    <div class="form-field">
+      <label for="name">Nom</label>
+      <input pInputText
+        type="text"
+        id="name"
+        name="name"
+        formControlName="name">
+    </div>
+    <div class="form-field">
+        <label for="internalReference">Reference Interne</label>
+        <input pInputText
+          type="text"
+          id="internalReference"
+          name="internalReference"
+          formControlName="internalReference">
+    </div>
+    <div class="form-field">
+        <label for="description">Description</label>
+        <textarea pInputTextarea 
+          id="description"
+          name="description"
+          rows="5" 
+          cols="30" 
+          formControlName="description">
+        </textarea>
+    </div> 
+    <div class="form-field">
+        <label for="name">Image</label>
+        <input pInputText
+          type="url"
+          id="image"
+          name="image"
+          formControlName="image">
+    </div>
+    <div class="form-field">
+      <label for="price">Prix</label>
+      <p-inputNumber 
+        formControlName="price" 
+        name="price"
+        mode="currency"
+        currency="XOF"
+        required/> 
+    </div>
+
+    <div class="form-field">
+        <label for="quanity">Quantité</label>
+        <p-inputNumber 
+          formControlName="quantity" 
+          name="quantity"
+          mode="decimal"
+          required/> 
+    </div>
+         
+    <div class="form-field">
+      <label for="category">Catégorie</label>
+      <p-dropdown 
+        id="category"
+        formControlName="category"
+        [options]="categories"
+        name="category"
+        appendTo="body"
+      />
+    </div>
+
+    <div class="form-field">
+        <label for="rating">Notation</label>
+        <p-inputNumber 
+          id="rating"
+          formControlName="rating" 
+          name="rating"
+          mode="decimal"
+          [min]="0" [max]="5"
+        /> 
+    </div>
+
+    <div class="flex justify-content-between">
+      <p-button type="button" (click)="onCancel()" label="Annuler" severity="help"/>
+      <p-button icon="pi pi-chevron-right" [loading]="loading"[disabled]="!form.valid" type="submit" label="Enregistrer" severity="success"/>
+    </div>
+  </form>

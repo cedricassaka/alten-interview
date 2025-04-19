@@ -21,11 +21,13 @@
     <p-paginator (onPageChange)="onPageChange($event)"  [first]="first" [rows]="size" [totalRecords]="totalElements" [rowsPerPageOptions]="[10, 20, 50]" />
 </div>
 
+<p-toast />
+<p-confirmDialog />
+
 <p-dialog [(visible)]="isDialogVisible"
     [style]="{ width: '50vw' }"
     header="Ajout/Edition produit">
     <app-product-form
-        [product]="editedProduct()"
         (save)="onSave($event)"
         (cancel)="onCancel()"
     />
