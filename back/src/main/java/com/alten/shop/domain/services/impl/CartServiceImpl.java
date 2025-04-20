@@ -2,11 +2,14 @@ package com.alten.shop.domain.services.impl;
 
 import com.alten.shop.domain.models.*;
 import com.alten.shop.domain.services.CartService;
+import com.alten.shop.domain.services.ProductService;
 import com.alten.shop.domain.services.UserService;
 import com.alten.shop.runtime.handler.exception.InvalidResourcePropertyException;
 import com.alten.shop.runtime.handler.exception.ResourceNotFoundException;
 import com.alten.shop.runtime.repositories.CartItemRepository;
 import com.alten.shop.runtime.repositories.CartRepository;
+import com.alten.shop.runtime.rest.dtos.CartItemDTO;
+import com.alten.shop.runtime.rest.dtos.ProductItemDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,48 +30,51 @@ public class CartServiceImpl implements CartService {
     private final CartRepository repository;
     private final CartItemRepository itemRepository;
     private final UserService userService;
+    private final ProductService productService;
 
     @Override
     @Transactional
-    public Cart addProductToCart(CartItem cartItem, Authentication authentication) {
+    public Page<CartItem> addProductToCart(CartItemDTO cartItem, Authentication authentication, Pageable pageable) {
         Cart cart = getCart(authentication);
         Optional<CartItem> itemExist = cart.getItems().stream()
-                .filter(item -> Objects.equals(item.getProduct().getId(), cartItem.getProduct().getId()))
+                .filter(item -> Objects.equals(item.getProduct().getId(), cartItem.product().id()))
                 .findFirst();
+        Product product = productService.findById(cartItem.product().id());
         if (itemExist.isPresent()) {
             CartItem item = itemExist.get();
-            if (cartItem.getQuantity() > cartItem.getProduct().getQuantity()) throw new InvalidResourcePropertyException("CartIem Quantity");
+            if (cartItem.quantity() > product.getQuantity()) throw new InvalidResourcePropertyException("CartItem Quantity");
             cart.getItems().remove(item);
-            item.setQuantity(cartItem.getQuantity());
+            item.setQuantity(cartItem.quantity());
             cart.getItems().add(item);
         } else {
-            cartItem.setId(
-                    CartItemKey.builder()
-                            .productId(cartItem.getProduct().getId())
+            CartItem item = CartItem.builder()
+                    .id(CartItemKey.builder()
+                            .productId(cartItem.product().id())
                             .cartId(cart.getId())
-                            .build()
-            );
-            cartItem.setCart(cart);
-            itemRepository.save(cartItem);
+                            .build())
+                    .quantity(cartItem.quantity())
+                    .product(product)
+                    .cart(cart)
+                    .build();
 
-            cart.getItems().add(cartItem);
+            itemRepository.save(item);
         }
-        return repository.save(cart);
+        return getCartContent(authentication, pageable);
     }
 
     @Override
     @Transactional
-    public Cart removeProductToCart(Product product, Authentication authentication) {
+    public Page<CartItem> removeProductToCart(ProductItemDTO product, Authentication authentication, Pageable pageable) {
         Cart cart = getCart(authentication);
-        log.info("{}", cart.getItems());
+        log.info("{}", cart.getItems().size());
         Optional<CartItem> itemExist = cart.getItems().stream()
-                .filter(item -> Objects.equals(item.getProduct().getId(), product.getId()))
+                .filter(item -> Objects.equals(item.getProduct().getId(), product.id()))
                 .findFirst();
         if (cart.getItems().isEmpty() || itemExist.isEmpty()) throw new ResourceNotFoundException("Product not found in cart");
         CartItem existingItem = itemExist.get();
         cart.getItems().remove(existingItem);
         itemRepository.delete(existingItem);
-        return repository.save(cart);
+        return getCartContent(authentication, pageable);
     }
 
     @Transactional

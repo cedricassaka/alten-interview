@@ -18,6 +18,7 @@ public class Cart extends AuditMetadata {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @JsonIgnore
     private Long id;
 
     @JsonIgnore
@@ -25,6 +26,6 @@ public class Cart extends AuditMetadata {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "cart")
     private Set<CartItem> items;
 }

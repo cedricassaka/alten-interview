@@ -14,6 +14,7 @@ import lombok.experimental.SuperBuilder;
 @ToString
 public class CartItem extends AuditMetadata {
 
+
     @JsonIgnore
     @EmbeddedId
     CartItemKey id;

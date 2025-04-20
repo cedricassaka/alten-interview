@@ -20,6 +20,7 @@ public class WishList extends AuditMetadata {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @JsonIgnore
     private long id;
 
     @JsonIgnore

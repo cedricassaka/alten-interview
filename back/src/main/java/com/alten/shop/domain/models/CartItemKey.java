@@ -12,7 +12,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CartItemKey implements Serializable {
     @Column(name = "cart_id")
     Long cartId;
