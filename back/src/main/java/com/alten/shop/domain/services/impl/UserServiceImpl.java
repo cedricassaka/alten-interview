@@ -2,6 +2,7 @@ package com.alten.shop.domain.services.impl;
 
 import com.alten.shop.domain.models.User;
 import com.alten.shop.domain.services.UserService;
+import com.alten.shop.runtime.handler.exception.ResourceNotFoundException;
 import com.alten.shop.runtime.repositories.UserRepository;
 import com.alten.shop.runtime.rest.dtos.UserRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +22,12 @@ public class UserServiceImpl implements UserService {
     private final ObjectMapper mapper;
     private final PasswordEncoder passwordEncoder;
 
+
+    @Override
+    public User findByEmail(String email) {
+        return repository.findFirstByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email " + email));
+    }
 
     @Override
     @Transactional
