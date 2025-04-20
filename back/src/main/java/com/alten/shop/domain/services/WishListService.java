@@ -7,6 +7,6 @@ import org.springframework.security.core.Authentication;
 
 public interface WishListService {
     public WishList  addProductToWishList(Product product, Authentication authentication);
-    public WishList removeProductionToList(Product product, Authentication authentication);
+    public WishList removeProductionToWishList(Product product, Authentication authentication);
     public WishList getWishList(Authentication authentication);
 }

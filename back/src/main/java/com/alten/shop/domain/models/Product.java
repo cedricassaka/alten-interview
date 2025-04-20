@@ -11,10 +11,11 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
+@ToString
 public class Product extends AuditMetadata {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @Column(nullable = false, unique = true)
     private String code;
     @Column(nullable = false)

@@ -1,6 +1,6 @@
 package com.alten.shop.runtime.security;
 
-import com.alten.shop.domain.services.CustomUserDetailsService;
+import com.alten.shop.domain.services.impl.CustomUserDetailsService;
 import com.alten.shop.runtime.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

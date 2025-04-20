@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -30,7 +31,7 @@ public class WishListServiceImpl implements WishListService {
     public WishList addProductToWishList(Product product, Authentication authentication) {
         WishList wishList = getWishList(authentication);
         boolean productExist = wishList.getProducts().stream()
-                .anyMatch(productInList -> productInList.getId() == product.getId());
+                .anyMatch(productInList -> Objects.equals(productInList.getId(), product.getId()));
         if (productExist) throw new DuplicateKeyException("Product in the wish list");
         wishList.getProducts().add(product);
         return repository.save(wishList);
@@ -38,10 +39,10 @@ public class WishListServiceImpl implements WishListService {
 
     @Override
     @Transactional
-    public WishList removeProductionToList(Product product, Authentication authentication) {
+    public WishList removeProductionToWishList(Product product, Authentication authentication) {
         WishList wishList = getWishList(authentication);
         Optional<Product> productExist = wishList.getProducts().stream()
-                .filter(productInList -> productInList.getId() == product.getId()).findFirst();
+                .filter(productInList -> Objects.equals(productInList.getId(), product.getId())).findFirst();
         if (wishList.getProducts().isEmpty() || productExist.isEmpty()) throw new ResourceNotFoundException("Product not found in wish list");
         Product existingProduct = productExist.get();
         wishList.getProducts().remove(existingProduct);

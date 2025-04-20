@@ -1,6 +1,6 @@
 package com.alten.shop.runtime.config;
 
-import com.alten.shop.domain.services.CustomUserDetailsService;
+import com.alten.shop.domain.services.impl.CustomUserDetailsService;
 import com.alten.shop.runtime.security.CustomAuthenticationEntryPoint;
 import com.alten.shop.runtime.security.JwtRequestFilter;
 import com.alten.shop.runtime.utils.JwtUtils;
@@ -16,7 +16,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 

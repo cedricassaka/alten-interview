@@ -1,4 +1,4 @@
-package com.alten.shop.domain.services;
+package com.alten.shop.domain.services.impl;
 
 
 import com.alten.shop.runtime.repositories.UserRepository;

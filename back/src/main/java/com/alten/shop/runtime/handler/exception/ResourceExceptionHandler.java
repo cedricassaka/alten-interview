@@ -1,8 +1,6 @@
 package com.alten.shop.runtime.handler.exception;
 
 import com.alten.shop.runtime.handler.ErrorCode;
-import io.jsonwebtoken.ClaimJwtException;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -37,11 +35,12 @@ public class ResourceExceptionHandler extends ResponseEntityExceptionHandler {
                 new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
-    @ExceptionHandler(value = { ExpiredJwtException.class, ClaimJwtException.class })
-    protected ResponseEntity<Object> handleExpiredToken (
+
+    @ExceptionHandler(value = { InvalidResourcePropertyException.class, InvalidResourcePropertyException.class })
+    protected ResponseEntity<Object> handleInvalidResourceData (
             RuntimeException ex, WebRequest request) {
-        return handleExceptionInternal(ex, new ErrorCode(ex.getMessage(), "BC-00002"),
-                new HttpHeaders(), HttpStatus.UNAUTHORIZED, request);
+        return handleExceptionInternal(ex, new ErrorCode(ex.getMessage() + " data invalid", "BC-00002"),
+                new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
 

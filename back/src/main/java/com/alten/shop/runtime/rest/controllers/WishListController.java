@@ -19,18 +19,18 @@ public class WishListController {
 
     private final WishListService wishListService;
 
-    @GetMapping
+    @GetMapping("/get-content")
     public ResponseEntity<WishList> getWishList(Authentication authentication) {
         return ResponseEntity.ok(wishListService.getWishList(authentication));
     }
 
-    @PostMapping
+    @PostMapping("/add-product")
     public ResponseEntity<WishList> addProductToWishList(@RequestBody Product product, Authentication authentication) {
         return ResponseEntity.ok(wishListService.addProductToWishList(product, authentication));
     }
 
-    @PutMapping
-    public ResponseEntity<WishList> getWishList(@RequestBody Product product, Authentication authentication) {
-        return ResponseEntity.ok(wishListService.removeProductionToList(product, authentication));
+    @PutMapping("/remove-product")
+    public ResponseEntity<WishList> removeProductFromWishList(@RequestBody Product product, Authentication authentication) {
+        return ResponseEntity.ok(wishListService.removeProductionToWishList(product, authentication));
     }
 }
