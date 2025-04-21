@@ -13,8 +13,6 @@ import com.alten.shop.runtime.rest.dtos.ProductItemDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +32,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public Page<CartItem> addProductToCart(CartItemDTO cartItem, Authentication authentication, Pageable pageable) {
+    public Cart addProductToCart(CartItemDTO cartItem, Authentication authentication) {
         Cart cart = getCart(authentication);
         Optional<CartItem> itemExist = cart.getItems().stream()
                 .filter(item -> Objects.equals(item.getProduct().getId(), cartItem.product().id()))
@@ -57,16 +55,16 @@ public class CartServiceImpl implements CartService {
                     .cart(cart)
                     .build();
 
-            itemRepository.save(item);
+            item = itemRepository.save(item);
+            cart.getItems().add(item);
         }
-        return getCartContent(authentication, pageable);
+        return cart;
     }
 
     @Override
     @Transactional
-    public Page<CartItem> removeProductToCart(ProductItemDTO product, Authentication authentication, Pageable pageable) {
+    public Cart removeProductToCart(ProductItemDTO product, Authentication authentication) {
         Cart cart = getCart(authentication);
-        log.info("{}", cart.getItems().size());
         Optional<CartItem> itemExist = cart.getItems().stream()
                 .filter(item -> Objects.equals(item.getProduct().getId(), product.id()))
                 .findFirst();
@@ -74,11 +72,12 @@ public class CartServiceImpl implements CartService {
         CartItem existingItem = itemExist.get();
         cart.getItems().remove(existingItem);
         itemRepository.delete(existingItem);
-        return getCartContent(authentication, pageable);
+        return cart;
     }
 
     @Transactional
-    private Cart getCart(Authentication authentication) {
+    @Override
+    public Cart getCart(Authentication authentication) {
         User user = userService.findByEmail(authentication.getName());
         return repository.findFirstByUserId(user.getId())
                 .orElse(
@@ -90,10 +89,5 @@ public class CartServiceImpl implements CartService {
                                 .build()
                         )
                 );
-    }
-
-    @Override
-    public Page<CartItem> getCartContent(Authentication authentication, Pageable pageable) {
-        return itemRepository.findByCartId(getCart(authentication).getId(), pageable);
     }
 }
