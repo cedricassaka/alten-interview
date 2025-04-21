@@ -14,7 +14,7 @@ import { PageResponse } from "./page-response.model";
     public editedProduct = new Subject<Product>()
 
     public get(page: number, size: number): Observable<PageResponse> {
-        return this.http.get<PageResponse>(`${this.path}?page=${page}&size=${size}`);
+        return this.http.get<PageResponse>(`${this.path}?page=${page}&size=${size}&sort=id,DESC`);
     }
 
     public create(product: Product): Observable<Product> {

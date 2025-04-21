@@ -10,6 +10,12 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { CommonModule } from "@angular/common";
+import { TagModule } from 'primeng/tag';
+import { CartService } from "app/cart/data-access/cart.service";
+import { WishListService } from "app/cart/data-access/wish-list.service";
+import { WishList } from "app/cart/data-access/wish-list.model";
+import { Cart } from "app/cart/data-access/cart.model";
 
 
 @Component({
@@ -25,11 +31,17 @@ import { ConfirmationService, MessageService } from 'primeng/api';
     ProductFormComponent, 
     PaginatorModule, 
     ToastModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    CommonModule,
+    TagModule
+    
   ],
 })
 export class ProductListComponent implements OnInit {
   private readonly productsService = inject(ProductsService);
+  private readonly cartService = inject(CartService);
+  private readonly wishListService: WishListService = inject(WishListService);
+
   confirmationService = inject(ConfirmationService);
   messageService = inject(MessageService);
 
@@ -39,12 +51,23 @@ export class ProductListComponent implements OnInit {
   public isCreation = false;
   public totalElements = 0;
   public page = 0;
-  public first = 0;
-  public size = 10;
+  public size = 5;
+  public loading = false;
+
+  wishList: WishList | null = null;
+  cart: Cart | null = null;
 
 
   ngOnInit() {
     this.load(true);
+
+    this.wishListService.wishList.subscribe({
+      next: (value) => this.wishList = value
+    })
+
+    this.cartService.cart.subscribe({
+      next: (value) => this.cart = value
+    })
   }
 
 
@@ -52,7 +75,7 @@ export class ProductListComponent implements OnInit {
     this.productsService.get(this.page, this.size).subscribe({
       next: (response) => {
         if (initial) this.totalElements = response.page.totalElements;
-        this.products = response.content;
+        this.products = (response.content  as Product[]);
       }
     });
   }
@@ -112,9 +135,69 @@ export class ProductListComponent implements OnInit {
     this.isDialogVisible = false;
   }
 
-  public onPageChange(pageevent: PaginatorState) {
-    this.page = pageevent.page!;
-    this.size = pageevent.rows!;
-    this.load(false)
+  public onPageChange(pageevent: any) {
+    this.size = Number(pageevent.rows)
+    this.page = pageevent.first / pageevent.rows;
+    this.load(pageevent.first === 0);
+  }
+
+  getSeverity(product: Product): "success" | "secondary" | "info" | "warning" | "danger" | "contrast" | undefined {
+    switch (product.inventoryStatus) {
+      case 'INSTOCK':
+        return 'success';
+
+      case 'LOWSTOCK':
+        return 'warning';
+
+      case 'OUTOFSTOCK':
+        return 'danger';
+
+      default:
+        return undefined;
+    }
+  };
+
+  checkProductInWishList(product: Product): boolean {
+    if (this.wishList === null) return false;
+    return this.wishList.products.find(x => x.id === product.id) !== undefined;
+  }
+
+  public addToWishList(product: Product) {
+    this.wishListService.addProduct(product).subscribe({
+      next: (response) => {
+        this.messageService.add({ severity: 'success', summary: '', detail: 'Produit enrigistré dans la liste', life: 3000 });
+      }
+    })
+  }
+
+  public removeFromWishList(product: Product) {
+    this.wishListService.removeProduct(product).subscribe({
+      next: (response) => {
+        this.messageService.add({ severity: 'success', summary: '', detail: 'Produit retiré de la liste', life: 3000 });
+      }
+    })
+  }
+
+  wishListAction(product: Product) {
+    if (this.checkProductInWishList(product)) {
+      this.removeFromWishList(product)
+      return;
+    }
+    this.addToWishList(product);
+  }
+
+  public addToCart(product: Product) {
+    this.cartService.addProduct(product, this.getProductQuantityInCart(product) + 1).subscribe({
+      next: (response) => {
+        this.messageService.add({ severity: 'success', summary: '', detail: 'Produit ajouté au panier', life: 3000 });
+      }
+    })
+  }
+
+  getProductQuantityInCart(product: Product): number {
+    if (this.cart === null) return 0;
+    const item = this.cart.items.find(x => x.product.id === product.id);
+    if (item === undefined) return 0;
+    return item.quantity;
   }
 }

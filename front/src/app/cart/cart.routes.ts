@@ -3,7 +3,7 @@ import { CartContentComponent } from "./features/cart-content/cart-content.compo
 
 export const CART_ROUTES: Routes = [
     {
-        path: "/",
+        path: "",
         component: CartContentComponent,
     }
 ];
